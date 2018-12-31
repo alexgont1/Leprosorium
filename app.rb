@@ -24,7 +24,7 @@ end
 
 get '/' do
   init_db
-  @results = @db.execute 'SELECT * FROM Posts'
+  @results = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
   erb :index
 end
 
@@ -40,7 +40,9 @@ post '/new' do
     return erb :new
   end
 
-  @db.execute 'INSERT INTO Posts (content, created_date) VALUES (?, datetime())', [content]
+  #save post in DB
+  @db.execute 'INSERT INTO Posts (content, created_date) VALUES 
+  (?, datetime())', [content]
 
   erb "You typed #{content}"
 end
