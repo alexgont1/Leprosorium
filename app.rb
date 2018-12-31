@@ -23,6 +23,8 @@ configure do
 end
 
 get '/' do
+  init_db
+  @results = @db.execute 'SELECT * FROM Posts'
   erb :index
 end
 
