@@ -23,7 +23,6 @@ configure do
 end
 
 get '/' do
-  init_db
   @results = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
   erb :index
 end
@@ -44,5 +43,6 @@ post '/new' do
   @db.execute 'INSERT INTO Posts (content, created_date) VALUES 
   (?, datetime())', [content]
 
-  erb "You typed #{content}"
+  #open main page
+  redirect to '/'
 end
