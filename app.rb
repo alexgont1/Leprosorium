@@ -64,6 +64,9 @@ get '/details/:post_id' do
   #put info about post to @row
   @row = @results[0]
 
+  #select comments for our post
+  @comments =  @db.execute 'SELECT * FROM Comments WHERE post_id = ?', [post_id]
+
   erb :details
 end
 
