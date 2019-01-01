@@ -18,6 +18,7 @@ configure do
   (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_date DATE,
+    post_name TEXT,
     content TEXT
   )'
 
@@ -40,7 +41,13 @@ get '/new' do
 end
 
 post '/new' do
+  post_name = params[:post_name]
   content = params[:content]
+
+  if post_name.length < 1
+    @error = 'Type your name '
+    return erb :new
+  end
 
   if content.length < 1
     @error = 'Type post text'
@@ -48,8 +55,8 @@ post '/new' do
   end
 
   #save post in DB
-  @db.execute 'INSERT INTO Posts (content, created_date) VALUES 
-  (?, datetime())', [content]
+  @db.execute 'INSERT INTO Posts (post_name, content, created_date) 
+  VALUES (?, ?, datetime())', [post_name, content]
 
   #open main page
   redirect to '/'
@@ -73,12 +80,22 @@ end
 #get comment from server
 post '/details/:post_id' do
   post_id = params[:post_id]
+  post_name = params[:post_name]
 
   content = params[:content]
 
   #save comment in DB
-  @db.execute 'INSERT INTO Comments (content, created_date, post_id) 
-  VALUES (?, datetime(), ?)', [content, post_id]
+  @db.execute 'INSERT INTO Comments 
+  (
+    post_name,
+    content,
+    created_date,
+    post_id
+  )   VALUES (?, ?, datetime(), ?)', 
+  [
+    post_name, 
+    content, 
+    post_id]
 
   redirect to ('/details/' + post_id)
 end
