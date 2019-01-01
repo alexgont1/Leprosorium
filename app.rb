@@ -20,6 +20,14 @@ configure do
     created_date DATE,
     content TEXT
   )'
+
+  @db.execute 'CREATE TABLE IF NOT EXISTS Comments 
+  (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_date DATE,
+    content TEXT,
+    post_id INTEGER
+  )'
 end
 
 get '/' do
@@ -57,4 +65,13 @@ get '/details/:post_id' do
   @row = @results[0]
 
   erb :details
+end
+
+#get comment from server
+post '/details/:post_id' do
+  post_id = params[:post_id]
+
+  content = params[:content]
+
+  erb "Your comment #{content}"
 end
