@@ -70,9 +70,9 @@ get '/details/:post_id' do
   @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
   #put info about post to @row
   @row = @results[0]
-
   #select comments for our post
-  @comments =  @db.execute 'SELECT * FROM Comments WHERE post_id = ?', [post_id]
+  @comments =  @db.execute 'SELECT * FROM Comments WHERE 
+  post_id = ?', [post_id]
 
   erb :details
 end
@@ -80,22 +80,31 @@ end
 #get comment from server
 post '/details/:post_id' do
   post_id = params[:post_id]
-  post_name = params[:post_name]
 
   content = params[:content]
+
+  if content.length < 1
+    @error = 'Type comment text'
+    
+    @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
+    @row = @results[0]
+    @comments =  @db.execute 'SELECT * FROM Comments WHERE 
+    post_id = ?', [post_id]
+
+    return erb :details
+  end
 
   #save comment in DB
   @db.execute 'INSERT INTO Comments 
   (
-    post_name,
     content,
     created_date,
     post_id
-  )   VALUES (?, ?, datetime(), ?)', 
+  )   VALUES (?, datetime(), ?)', 
   [
-    post_name, 
     content, 
-    post_id]
+    post_id
+  ]
 
   redirect to ('/details/' + post_id)
 end
