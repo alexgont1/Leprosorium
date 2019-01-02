@@ -32,7 +32,6 @@ configure do
 end
 
 def post_info post_id
-  init_db
   #get post info
   @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
   #put info about post to @row
