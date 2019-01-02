@@ -31,6 +31,17 @@ configure do
   )'
 end
 
+def post_info post_id
+  init_db
+  #get post info
+  @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
+  #put info about post to @row
+  @row = @results[0]
+  #select comments for our post
+  @comments =  @db.execute 'SELECT * FROM Comments WHERE 
+  post_id = ?', [post_id]
+end
+
 get '/' do
   @results = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
   erb :index
@@ -66,13 +77,7 @@ end
 get '/details/:post_id' do
   post_id = params[:post_id]
 
-  #get post info
-  @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-  #put info about post to @row
-  @row = @results[0]
-  #select comments for our post
-  @comments =  @db.execute 'SELECT * FROM Comments WHERE 
-  post_id = ?', [post_id]
+  post_info post_id
 
   erb :details
 end
@@ -85,11 +90,8 @@ post '/details/:post_id' do
 
   if content.length < 1
     @error = 'Type comment text'
-    
-    @results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-    @row = @results[0]
-    @comments =  @db.execute 'SELECT * FROM Comments WHERE 
-    post_id = ?', [post_id]
+
+    post_info post_id
 
     return erb :details
   end
